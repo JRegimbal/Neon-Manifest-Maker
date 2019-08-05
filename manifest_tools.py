@@ -1,6 +1,6 @@
 import json
-import datetime from datetime
 import xml.etree.ElementTree as ET
+from datetime import datetime
 from uuid import uuid4
 
 
