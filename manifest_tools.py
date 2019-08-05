@@ -34,8 +34,8 @@ def extract_canvas_from_mei(mei_raw):
 def generate_annotation(mei_uri, canvas_uri, canvases):
     try:
         canvases.index(canvas_uri)
-    except ValueError e:
-        throw CanvasNotFoundError()
+    except ValueError:
+        raise CanvasNotFoundError
 
     return {
         'id': 'urn:uuid' + str(uuid4()),
