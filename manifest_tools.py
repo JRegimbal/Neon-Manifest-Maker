@@ -1,4 +1,5 @@
 import json
+import datetime from datetime
 import xml.etree.ElementTree as ET
 from uuid import uuid4
 
@@ -42,3 +43,35 @@ def generate_annotation(mei_uri, canvas_uri, canvases):
         'body': mei_uri,
         'target': canvas_uri
     }
+
+
+def generate_manifest_json(annotations, image, title='Generated Manifest',
+                           id=None, indent=4):
+    manifest = {
+        '@context': [
+            'http://www.w3.org/ns/anno.jsonld',
+            {
+                'schema': 'http://schema.org/',
+                'title': 'schema:name',
+                'timestamp': 'schema:dateModified',
+                'image': {
+                    '@id': 'schema:image',
+                    '@type': '@id'
+                },
+                'mei_annotations': {
+                    '@id': 'Annotation',
+                    '@type': '@id',
+                    '@container': '@list'
+                }
+            }
+        ]
+    }
+
+    manifest['title'] = title
+    if id is None:
+        id = 'urn:uuid' + str(uuid4())
+    manifest['@id'] = id
+    manifest['timestamp'] = datetime.utcnow().isoformat()
+    manifest['image'] = image
+    manifest['mei_annotations'] = annotations
+    return json.dumps(manifest, indent=indent)

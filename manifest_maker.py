@@ -53,31 +53,13 @@ class ManifestMaker(RodanTask):
             ))
             canvases.remove(canvas)
 
-        manifest = {
-            '@context': [
-                'http://www.w3.org/ns/anno.jsonld',
-                {
-                    'schema': 'http://schema.org/',
-                    'title': 'schema:name',
-                    'timestamp': 'schema:dateModified',
-                    'image': {
-                        '@id': 'schema:image',
-                        '@type': '@id'
-                    },
-                    'mei_annotations': {
-                        '@id': 'Annotation',
-                        '@type': '@id',
-                        '@container': '@list'
-                    }
-                }
-            ]
-        }
-        manifest['title'] = 'Rodan-generated Manifest'
-        manifest['@id'] = outputs['Neon Manifest'][0]['resource_url']
-        manifest['timestamp'] = datetime.utcnow().isoformat()
-        manifest['mei_annotations'] = annotations
-
-        manifest_jsonld = json.dumps(manifest, indent=4)
+        manifest_jsonld = tools.generate_manifest_json(
+            annotations,
+            inputs['IIIF Manifest'][0]['resource_url'],
+            title='Rodan-generated Manifest',
+            id=outputs['Neon Manifest'][0]['resource_url'],
+            indent=4
+        )
 
         manifest_file = open(outputs['Neon Manifest'][0]['resource_path'], 'w')
         manifest_file.write(manifest_jsonld)
