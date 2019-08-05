@@ -1,5 +1,12 @@
 import json
 import xml.etree.ElementTree as ET
+from uuid import uuid4
+
+
+class CanvasNotFoundError(Exception):
+    def __init__(self, expression, message):
+        self.expression = expression
+        self.message = message
 
 
 def index_manifest_canvases(manifest_raw):
@@ -21,3 +28,17 @@ def extract_canvas_from_mei(mei_raw):
     source = sources[0]
     assert source.get('auth.uri') is not None
     return source.get('auth.uri')
+
+
+def generate_annotation(mei_uri, canvas_uri, canvases):
+    try:
+        canvases.index(canvas_uri)
+    except ValueError e:
+        throw CanvasNotFoundError()
+
+    return {
+        'id': 'urn:uuid' + str(uuid4()),
+        'type': 'Annotation',
+        'body': mei_uri,
+        'target': canvas_uri
+    }
