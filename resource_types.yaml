@@ -1,0 +1,11 @@
+- mimetype: application/mei+xml
+  description: Music Encoding Initiative
+  extension: mei
+
+- mimetype: application/json
+  description: JavaScript Object Notation
+  extension: json
+
+- mimetype: application/ld+json
+  description: JavaScript Object Notation for Linked Data
+  extension: jsonld
