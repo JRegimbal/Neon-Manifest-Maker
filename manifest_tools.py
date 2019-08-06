@@ -1,6 +1,7 @@
 import json
 import xml.etree.ElementTree as ET
 from datetime import datetime
+from tripoli import IIIFValidator
 from uuid import uuid4
 
 
@@ -12,7 +13,16 @@ class MEISourceError(Exception):
     pass
 
 
+class IIIFSourceError(Exception):
+    pass
+
+
 def index_manifest_canvases(manifest_raw):
+    # Validate IIIF Manifest
+    iv = IIIFValidator()
+    iv.validate(manifest_raw)
+    if !iv.is_valid:
+        raise IIIFSourceError("Invalid IIIF Manifest")
     # Parse IIIF Manifest
     manifest = json.loads(manifest_raw)
     canvases = []
