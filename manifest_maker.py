@@ -13,6 +13,7 @@ class ManifestMaker(RodanTask):
     enabled = True
     category = 'Miscellaneous'
     interactive = False
+    job_queue = 'python3'
 
     input_port_types = [
         {
