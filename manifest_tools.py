@@ -5,9 +5,11 @@ from uuid import uuid4
 
 
 class CanvasNotFoundError(Exception):
-    def __init__(self, expression, message):
-        self.expression = expression
-        self.message = message
+    pass
+
+
+class MEISourceError(Exception):
+    pass
 
 
 def index_manifest_canvases(manifest_raw):
@@ -25,8 +27,12 @@ def extract_canvas_from_mei(mei_raw):
     sources = root.findall(
         './/{http://www.music-encoding.org/ns/mei}source[@recordtype="m"]'
     )
-    assert len(sources) == 1
+    if len(sources) != 1:
+        raise MEISourceError("Expected 1 source tag with recordtype 'm' but \
+            got " + str(len(sources)) + ".")
     source = sources[0]
+    if source.get('auth.uri') is None:
+        raise MEISourceError("Source did not have attribute 'auth.uri'.")
     assert source.get('auth.uri') is not None
     return source.get('auth.uri')
 
@@ -35,7 +41,7 @@ def generate_annotation(mei_uri, canvas_uri, canvases):
     try:
         canvases.index(canvas_uri)
     except ValueError:
-        raise CanvasNotFoundError
+        raise CanvasNotFoundError("Could not find canvas '" + canvas_uri + "'")
 
     return {
         'id': 'urn:uuid:' + str(uuid4()),
