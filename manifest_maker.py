@@ -1,7 +1,7 @@
 from datetime import datetime
 from rodan.jobs.base import RodanTask
 from rodan.models import RunJob
-import manifest_tools as tools
+from .manifest_tools import *
 import json
 
 
@@ -9,11 +9,12 @@ class ManifestMaker(RodanTask):
     name = 'Neon Manifest Maker'
     author = 'Juliette Regimbal'
     description = 'Make a Neon manifest from MEI files'
-    settings = {}
+    settings = {
+        'job_queue': 'Python3'
+    }
     enabled = True
     category = 'Miscellaneous'
     interactive = False
-    job_queue = 'python3'
 
     input_port_types = [
         {
@@ -47,21 +48,21 @@ class ManifestMaker(RodanTask):
         runjob = RunJob.objects.get(uuid=self.runjob_id)
         url_inputs = self._inputs(runjob, with_urls=True)
         manifest = open(inputs['IIIF Manifest'][0]['resource_path'], 'r')
-        canvases = tools.index_manifest_canvases(manifest.read())
+        canvases = index_manifest_canvases(manifest.read())
         manifest.close()
 
         annotations = []
         for mei_input in url_inputs['MEI']:
             mei_file = open(mei_input['resource_path'], 'r')
-            canvas = tools.extract_canvas_from_mei(mei_file.read())
-            annotations.append(tools.generate_annotation(
+            canvas = extract_canvas_from_mei(mei_file.read())
+            annotations.append(generate_annotation(
                 mei_input['resource_url'],
                 canvas,
                 canvases
             ))
             canvases.remove(canvas)
 
-        manifest_jsonld = tools.generate_manifest_json(
+        manifest_jsonld = generate_manifest_json(
             annotations,
             url_inputs['IIIF Manifest'][0]['resource_url'],
             title='Rodan-generated Manifest',
