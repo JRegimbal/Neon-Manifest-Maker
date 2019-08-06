@@ -38,7 +38,7 @@ def generate_annotation(mei_uri, canvas_uri, canvases):
         raise CanvasNotFoundError
 
     return {
-        'id': 'urn:uuid' + str(uuid4()),
+        'id': 'urn:uuid:' + str(uuid4()),
         'type': 'Annotation',
         'body': mei_uri,
         'target': canvas_uri
@@ -69,7 +69,7 @@ def generate_manifest_json(annotations, image, title='Generated Manifest',
 
     manifest['title'] = title
     if id is None:
-        id = 'urn:uuid' + str(uuid4())
+        id = 'urn:uuid:' + str(uuid4())
     manifest['@id'] = id
     manifest['timestamp'] = datetime.utcnow().isoformat()
     manifest['image'] = image
